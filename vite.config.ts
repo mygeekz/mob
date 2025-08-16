@@ -12,11 +12,11 @@ export default defineConfig({
     /*  درخواست‌های فرانت را به بک-اند لوکال (Express) فوروارد می‌کند  */
     proxy: {
       '/api': {
-        target: 'http://192.168.1.106:3001',
+        target: 'http://127.0.0.1:3001',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'http://192.168.1.106:3001',
+        target: 'http://127.0.0.1:3001',
         changeOrigin: true,
       },
     },

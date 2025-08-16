@@ -13,6 +13,7 @@ export const SIDEBAR_ITEMS: NavItem[] = [
   { name: 'گزارشات', icon: 'fa-solid fa-chart-pie', id: 'reports', path: '/reports' },
   { name: 'تحلیل هوشمند', icon: 'fa-solid fa-brain', id: 'smart-analysis', path: '/reports/analysis' },
   { name: 'فاکتورها', icon: 'fa-solid fa-file-invoice', id: 'invoices', path: '/invoices' },
+  { id:'price-inquiry', name:'استعلام قیمت', path:'/price-inquiry', icon:'fa-solid fa-magnifying-glass-dollar' },
   { name: 'تنظیمات', icon: 'fa-solid fa-gear', id: 'settings', path: '/settings' },
 ];
 
