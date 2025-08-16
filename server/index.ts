@@ -8,7 +8,11 @@ import { fileURLToPath } from 'url';
 import bcryptjs from 'bcryptjs';
 import crypto from 'crypto';
 import bwipjs from 'bwip-js';
+import pinoHttp from 'pino-http';
 
+import logger from './logger';
+import metricsRegister from './metrics';
+import priceIntakeRouter from './priceIntake';
 
 import {
   addProductToDb,
@@ -163,7 +167,20 @@ const __dirname = dirname(__filename);
 const app = express();
 const port = 3001;
 
-app.use(express.json());
+// --- Middlewares ---
+
+// Add request ID
+app.use((req: any, res, next) => {
+  req.id = crypto.randomUUID();
+  next();
+});
+
+// Add Pino logger
+app.use(pinoHttp({ logger }));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
 
 const uploadsDir = join(__dirname, '..', 'uploads');
 const avatarsDir = join(uploadsDir, 'avatars');
@@ -344,6 +361,24 @@ app.get('/api/barcode/phone/:id', async (req: Request, res: Response) => {
         res.status(500).send('Server error');
     }
 });
+
+
+// --- Metrics Endpoint ---
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', metricsRegister.contentType);
+    res.end(await metricsRegister.metrics());
+  } catch (ex) {
+    res.status(500).end(ex);
+  }
+});
+
+// --- Price Intake API ---
+// Check for env variable at startup
+if (process.env.FEATURE_PRICE_INQUIRY !== 'true') {
+    logger.warn("FEATURE_PRICE_INQUIRY is not 'true'. The Price Inquiry API will be disabled.");
+}
+app.use('/api/price-intake', priceIntakeRouter);
 
 
 // All subsequent routes require authentication

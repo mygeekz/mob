@@ -38,6 +38,7 @@ import AddRepair from './pages/AddRepair'; // Added
 import RepairDetail from './pages/RepairDetail'; // Added
 import Services from './pages/Services'; // Added
 import CompareSales from './pages/reports/CompareSales';
+import PriceInquiry from './pages/PriceInquiry';
 
 const App: React.FC = () => {
   return (
@@ -85,6 +86,7 @@ const App: React.FC = () => {
 			<Route path="/reports/periodic-comparison" element={<CompareSales />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/invoices/:orderId" element={<InvoiceDetail />} />
+            <Route path="/price-inquiry" element={<PriceInquiry />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
         </Route>
