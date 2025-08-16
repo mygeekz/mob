@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>داشبورد کوروش</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v33.003/Vazir-font-face.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+      .recharts-tooltip-wrapper {
+        direction: ltr; 
+      }
+      .recharts-tooltip-wrapper .recharts-tooltip-item-list {
+        direction: rtl; 
+      }
+      input[type=number]::-webkit-inner-spin-button, 
+      input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+      }
+      input[type=number] {
+        -moz-appearance: textfield; 
+      }
+
+      /* Print-specific styles */
+      @media print {
+        body {
+          margin: 0;
+          padding: 0;
+          background-color: #fff !important; /* Ensure white background for print */
+          -webkit-print-color-adjust: exact; /* Chrome, Safari */
+          print-color-adjust: exact; /* Firefox, Edge */
+        }
+        .print\:hidden {
+          display: none !important;
+        }
+        main.print\:p-0 {
+          padding: 0 !important;
+        }
+         main.print\:bg-white {
+          background-color: #fff !important;
+        }
+
+        /* Styles for printing the barcode label modal */
+        .printable-area {
+            visibility: visible !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background-color: white !important;
+        }
+        body > *:not(.printable-area) {
+            display: none !important;
+        }
+        
+
+        #invoice-content {
+          width: 100% !important; /* A4 width */
+          min-height: auto !important; /* A4 height approx */
+          margin: 0 !important;
+          padding: 1cm !important; /* Some padding for printer margins */
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+          font-size: 10pt !important; /* Adjust base font size for print */
+        }
+        /* Ensure specific elements within the invoice are also styled for print */
+        #invoice-content h1, #invoice-content h2, #invoice-content h3, #invoice-content h4 {
+            color: #000 !important; /* Ensure text is black for print */
+        }
+        #invoice-content table, #invoice-content th, #invoice-content td {
+            border-color: #ccc !important; /* Lighter borders for print */
+        }
+         #invoice-content .bg-gray-100 { /* Example of overriding a bg color */
+            background-color: #f8f9fa !important; /* A very light gray or white */
+        }
+         #invoice-content .bg-gray-700 {
+            background-color: #343a40 !important;
+        }
+        #invoice-content .text-white {
+            color: #fff !important;
+        }
+      }
+    </style>
+    
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.2",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "recharts": "https://esm.sh/recharts@^2.15.3",
+    "jalali-moment": "https://esm.sh/jalali-moment@^3.3.11",
+    "sqlite3": "https://esm.sh/sqlite3@^5.1.7",
+    "path": "https://esm.sh/path@^0.12.7",
+    "url": "https://esm.sh/url@^0.11.4",
+    "bcryptjs": "https://esm.sh/bcryptjs@^3.0.2",
+    "express": "https://esm.sh/express@^5.1.0",
+    "multer": "https://esm.sh/multer@^2.0.1",
+    "fs": "https://esm.sh/fs@^0.0.1-security",
+    "html2canvas": "https://esm.sh/html2canvas@^1.4.1",
+    "jspdf": "https://esm.sh/jspdf@^3.0.1",
+    "react-day-picker": "https://esm.sh/react-day-picker@^9.7.0",
+    "react-day-picker/": "https://esm.sh/react-day-picker@^9.7.0/",
+    "vite": "https://esm.sh/vite@^6.3.5",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.5.2",
+    "express-serve-static-core": "https://esm.sh/express-serve-static-core@^0.1.1",
+    "qs": "https://esm.sh/qs@^6.14.0",
+    "crypto": "https://esm.sh/crypto@^1.0.1",
+    "moment": "https://esm.sh/moment@^2.30.1",
+    "@tanstack/react-table": "https://esm.sh/@tanstack/react-table@8.19.2",
+    "node-fetch": "https://esm.sh/node-fetch@^3.3.2",
+    "bwip-js": "https://esm.sh/bwip-js@^4.6.0",
+    "@persian-tools/persian-tools": "https://esm.sh/@persian-tools/persian-tools@^3.5.0",
+    "process": "https://esm.sh/process@^0.11.10"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script> 
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noEmit": true, // Typically true for config files that are directly executed by Node/tsx
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": ["vite.config.ts"]
+}
