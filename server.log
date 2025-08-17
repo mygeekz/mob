@@ -1,39 +1,32 @@
 
 > kourosh-dashboard-rtl@0.0.0 dev
-> concurrently "npm run server" "npm run vite-dev"
+> tsx watch server/index.ts
 
-[1]
-[1] > kourosh-dashboard-rtl@0.0.0 vite-dev
-[1] > vite
-[1]
-[0]
-[0] > kourosh-dashboard-rtl@0.0.0 server
-[0] > tsx watch server/index.ts
-[0]
-[1]
-[1]   VITE v7.1.2  ready in 251 ms
-[1]
-[1]   ➜  Local:   http://localhost:5173/
-[1]   ➜  Network: http://192.168.0.2:5173/
-[0] node:fs:561
-[0]   return binding.open(
-[0]                  ^
-[0]
-[0] Error: ENOENT: no such file or directory, open './test/data/05-versions-space.pdf'
-[0]     at Object.openSync (node:fs:561:18)
-[0]     at Object.readFileSync (node:fs:445:35)
-[0]     at Object.<anonymous> (/app/node_modules/pdf-parse/index.js:15:25)
-[0]     at Module._compile (node:internal/modules/cjs/loader:1730:14)
-[0]     at Object.transformer (/app/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
-[0]     at Module.load (node:internal/modules/cjs/loader:1465:32)
-[0]     at Function._load (node:internal/modules/cjs/loader:1282:12)
-[0]     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
-[0]     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
-[0]     at cjsLoader (node:internal/modules/esm/translators:266:5) {
-[0]   errno: -2,
-[0]   code: 'ENOENT',
-[0]   syscall: 'open',
-[0]   path: './test/data/05-versions-space.pdf'
-[0] }
-[0]
-[0] Node.js v22.17.1
+{"level":"WARN","time":"2025-08-16T17:43:13.906Z","pid":12652,"hostname":"devbox","msg":"FEATURE_PRICE_INQUIRY is not 'true'. The Price Inquiry API will be disabled."}
+Connected to the SQLite database: kourosh_inventory.db
+Foreign key support enabled.
+Categories table ensured.
+Partners table ensured.
+Installment_transactions table ensured.
+Partner_ledger table ensured and enhanced with referenceType/ID.
+Products table ensured.
+Mobile_phone_details table (old structure) ensured.
+Phones table (new standalone) ensured.
+Customers table ensured.
+Customer_ledger table ensured.
+Sales_transactions table ensured.
+Sales_orders table ensured.
+Sales_order_items table ensured.
+Services table ensured.
+Settings table ensured.
+Roles table ensured.
+Users table ensured.
+Installment_sales table ensured.
+Installment_payments table ensured.
+Installment_checks table ensured.
+Invoices table ensured.
+Invoice_items table ensured.
+Repairs table ensured.
+Repair_parts table ensured.
+Initial data seeding completed/verified.
+Server running at http://localhost:3001
