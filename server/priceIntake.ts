@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import path from 'path';
+import path, { dirname } from 'path';
 import fs from 'fs/promises';
 import { createHash } from 'crypto';
 import pdf from 'pdf-parse';
@@ -24,11 +24,15 @@ const isPriceInquiryEnabled = (req: any, res: any, next: any) => {
   next();
 };
 
+import { fileURLToPath } from 'url';
+
 // All routes in this file will use the feature flag middleware
 router.use(isPriceInquiryEnabled);
 
 
 // --- Multer Setup for File Uploads ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads', 'price-intake');
 fs.mkdir(UPLOAD_DIR, { recursive: true }); // Ensure directory exists
 
@@ -170,7 +174,7 @@ async function insertPriceListAndItems(documentId: number, items: any[]): Promis
 
 // --- Core Processing Logic ---
 
-async function processAndStorePriceFile(filePath: string, originalName: string, mimeType: string, source_type: 'upload' | 'url', url?: string): Promise<{ documentId: number, itemsCount: number }> {
+async function processAndStorePriceFile(filePath: string, originalName: string, mimeType: string, source_type: 'upload' | 'url', url?: string): Promise<{ documentId: number, itemsCount: number, isDuplicate?: boolean, duplicateId?: number }> {
     const end = priceInquiryParseDurationSeconds.startTimer({ source_type });
     let documentId: number | null = null;
     try {
@@ -178,10 +182,8 @@ async function processAndStorePriceFile(filePath: string, originalName: string, 
 
         const existingDoc = await getAsync("SELECT id FROM price_documents WHERE sha256 = ?", [fileHash]);
         if (existingDoc) {
-            logger.info({ sha256: fileHash }, "Duplicate file detected. Skipping processing.");
-            // In a real app, you might want to return the existing document's data.
-            // For now, we'll throw an error to indicate a duplicate.
-            throw new Error(`File with hash ${fileHash} already exists.`);
+            logger.info({ sha256: fileHash, existingId: existingDoc.id }, "Duplicate file detected. Skipping processing.");
+            return { documentId: existingDoc.id, itemsCount: 0, isDuplicate: true, duplicateId: existingDoc.id };
         }
 
         const sourceId = await ensurePriceSource(source_type, source_type === 'upload' ? originalName : new URL(url!).hostname);
@@ -235,13 +237,28 @@ router.post('/upload', upload.single('priceFile'), async (req: any, res: any) =>
     }
 
     try {
-        const { documentId, itemsCount } = await processAndStorePriceFile(req.file.path, req.file.originalname, req.file.mimetype, 'upload');
-        priceInquiryRequestsTotal.inc({ method: 'POST', route: '/api/price-intake/upload', status_code: 200 });
-        res.json({ success: true, documentId, itemsCount, message: 'File processed successfully.' });
+        const result = await processAndStorePriceFile(req.file.path, req.file.originalname, req.file.mimetype, 'upload');
+
+        if (result.isDuplicate) {
+            priceInquiryRequestsTotal.inc({ method: 'POST', route: '/api/price-intake/upload', status_code: 409 });
+            logger.info({ metric: 'price_inquiry_requests_total' }, "Metric incremented for duplicate upload.");
+            // The file is a duplicate, so we don't need the newly uploaded one.
+            await fs.unlink(req.file.path).catch(err => logger.error({ error: err.message }, "Failed to delete duplicate temp file."));
+            return res.status(409).json({
+                success: false,
+                isDuplicate: true,
+                duplicateId: result.duplicateId,
+                message: `این فایل قبلاً با شناسه ${result.duplicateId} ثبت شده است.`
+            });
+        }
+
+        priceInquiryRequestsTotal.inc({ method: 'POST', route: '/api/price-intake/upload', status_code: 201 });
+        res.status(201).json({ success: true, documentId: result.documentId, itemsCount: result.itemsCount, message: 'File processed successfully.' });
+
     } catch (error: any) {
         priceInquiryRequestsTotal.inc({ method: 'POST', route: '/api/price-intake/upload', status_code: 500 });
-        // Clean up the uploaded file on failure
-        await fs.unlink(req.file.path).catch(err => logger.error({ error: err.message }, "Failed to delete temp file."));
+        // Clean up the uploaded file on a processing failure
+        await fs.unlink(req.file.path).catch(err => logger.error({ error: err.message }, "Failed to delete temp file on error."));
         res.status(500).json({ success: false, message: error.message || 'Failed to process file.' });
     }
 });
